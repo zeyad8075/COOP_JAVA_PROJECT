@@ -1,0 +1,16 @@
+# Compiled class files
+build/
+*.class
+
+# Derby runtime log and lock files
+derby.log
+*.lck
+
+# Editor and OS metadata
+.DS_Store
+Thumbs.db
+*.tmp
+.nb-cache/
+.vscode/
+.idea/
+*.iml

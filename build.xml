@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="COOP_JAVA_PROJECT" default="run" basedir=".">
+    <description>نظام إدارة التدريب الميداني (COOP) - كلية إدارة الأعمال بينبع</description>
+
+    <!-- تحميل خصائص مشروع NetBeans -->
+    <property file="nbproject/project.properties"/>
+
+    <path id="classpath">
+        <fileset dir="lib" includes="*.jar"/>
+    </path>
+
+    <!-- تنظيف مخلفات البناء -->
+    <target name="clean" description="Clean build and dist directories">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <!-- إنشاء المجلدات المطلوبة -->
+    <target name="init">
+        <mkdir dir="${build.classes.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="database"/>
+    </target>
+
+    <!-- ترجمة الكود المصدري -->
+    <target name="compile" depends="init" description="Compile project sources">
+        <javac srcdir="${src.dir}"
+               destdir="${build.classes.dir}"
+               encoding="${source.encoding}"
+               includeantruntime="false">
+            <classpath refid="classpath"/>
+        </javac>
+    </target>
+
+    <!-- بناء ملف JAR التنفيذي المستقل -->
+    <target name="jar" depends="compile" description="Package application into executable JAR">
+        <manifestclasspath property="manifest.classpath" jarfile="${dist.jar}">
+            <classpath refid="classpath"/>
+        </manifestclasspath>
+        <jar destfile="${dist.jar}" basedir="${build.classes.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main.class}"/>
+                <attribute name="Class-Path" value="${manifest.classpath}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <!-- تشغيل التطبيق -->
+    <target name="run" depends="compile" description="Run application">
+        <java classname="${main.class}" fork="true">
+            <jvmarg value="-Dfile.encoding=UTF-8"/>
+            <classpath>
+                <pathelement path="${build.classes.dir}"/>
+                <path refid="classpath"/>
+            </classpath>
+        </java>
+    </target>
+
+    <!-- تنفيذ جميع الاختبارات البرمجية -->
+    <target name="test" depends="compile" description="Run all unit and integration tests">
+        <mkdir dir="${build.test.classes.dir}"/>
+        <javac srcdir="${test.src.dir}"
+               destdir="${build.test.classes.dir}"
+               encoding="${source.encoding}"
+               includeantruntime="false">
+            <classpath>
+                <pathelement path="${build.classes.dir}"/>
+                <path refid="classpath"/>
+            </classpath>
+        </javac>
+
+        <echo message="=== تنفيذ اختبارات قاعدة البيانات (Derby) ==="/>
+        <java classname="test.DBConnectionTest" fork="true" failonerror="true">
+            <jvmarg value="-Dfile.encoding=UTF-8"/>
+            <classpath>
+                <pathelement path="${build.classes.dir}"/>
+                <pathelement path="${build.test.classes.dir}"/>
+                <path refid="classpath"/>
+            </classpath>
+        </java>
+
+        <echo message="=== تنفيذ اختبارات Model و DAO ==="/>
+        <java classname="test.ModelAndDAOTest" fork="true" failonerror="true">
+            <jvmarg value="-Dfile.encoding=UTF-8"/>
+            <classpath>
+                <pathelement path="${build.classes.dir}"/>
+                <pathelement path="${build.test.classes.dir}"/>
+                <path refid="classpath"/>
+            </classpath>
+        </java>
+
+        <echo message="=== تنفيذ اختبارات قراءة الملفات والاستيراد (Excel/CSV) ==="/>
+        <java classname="test.ExcelAndImportTest" fork="true" failonerror="true">
+            <jvmarg value="-Dfile.encoding=UTF-8"/>
+            <classpath>
+                <pathelement path="${build.classes.dir}"/>
+                <pathelement path="${build.test.classes.dir}"/>
+                <path refid="classpath"/>
+            </classpath>
+        </java>
+
+        <echo message="=== تنفيذ اختبارات طبقة الخدمات (Services) ==="/>
+        <java classname="test.ServiceLayerTest" fork="true" failonerror="true">
+            <jvmarg value="-Dfile.encoding=UTF-8"/>
+            <classpath>
+                <pathelement path="${build.classes.dir}"/>
+                <pathelement path="${build.test.classes.dir}"/>
+                <path refid="classpath"/>
+            </classpath>
+        </java>
+    </target>
+</project>
+
